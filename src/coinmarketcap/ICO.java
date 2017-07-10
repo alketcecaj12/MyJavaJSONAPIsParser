@@ -36,22 +36,20 @@ public class ICO {
 		public static void run() throws Exception{
 		String CM_response = getJSON(euro);
 		System.out.println(CM_response);
-		//String CM_global_response = getJSON(globalURL);
+		String CM_global_response = getJSON(globalURL);
 		
 		List<Coin>coinlist = getDailyValues(CM_response);
 		
-		//List<Coin>global = getGlobal(CM_global_response);
+		List<Coin>global = getGlobal(CM_global_response);
 		long ts = System.currentTimeMillis();
 		System.out.println("timestamp = "+ts);
-		//Timestamp timestamp = new Timestamp(ts);
-       // System.out.println(timestamp);
 		
 		for(int i = 0; i < coinlist.size(); i++){
 			System.out.println(coinlist.get(i).toString());
 		}
 	
 		print("coindata/Data_"+ts+".csv", coinlist);
-	  //  printGlobal("global/GlobalData"+ts+".csv",global);
+	    printGlobal("global/GlobalData"+ts+".csv",global);
 	}
 	
 	public static List<Coin>getDailyValues(String resp) throws Exception{
@@ -59,24 +57,6 @@ public class ICO {
 		 List<Coin> coins = new ArrayList<Coin>();
 		 List<String> coins2 = new ArrayList<String>();
 
-//	        "symbol": "BTC", 
-//	        "rank": "1", 
-//	        "price_usd": "2574.48", 
-//	        "price_btc": "1.0", 
-//	        "24h_volume_usd": "1075410000.0", 
-//	        "market_cap_usd": "42265366884.0", 
-//	        "available_supply": "16417050.0", 
-//	        "total_supply": "16417050.0", 
-//	        "percent_change_1h": "-0.1", 
-//	        "percent_change_24h": "2.02", 
-//	        "percent_change_7d": "-4.13", 
-//	        "last_updated": "1498729448", 
-//	        "price_eur": "2257.94253504", 
-//	        "24h_volume_eur": "943186189.68", 
-//	        "market_cap_eur": "37068755495.0"
-		 
-		 
-		 
 		 String sym ="";
 		 int rank = 0;
 		 Double priceusd = null;
@@ -170,7 +150,7 @@ public class ICO {
 		return json_string; 
 	}  
 
-	public static void print(String file,  List<Coin>m) throws Exception{  
+	public static void printGlobal(String file,  List<Coin>m) throws Exception{  
 		
 		PrintWriter out = new PrintWriter(new FileWriter(new File(file)));  
 		out.println("sym,name,rank,price_usd,price_btc,percent_change1h,percent_change1d,vol,last_up");
@@ -181,7 +161,7 @@ public class ICO {
 		    out.close(); 
 	}
 
-    public static void printGlobal(String file,  List<Coin>m) throws Exception{  
+    public static void print(String file,  List<Coin>m) throws Exception{  
 		
 		PrintWriter out = new PrintWriter(new FileWriter(new File(file), true));  
 		out.println("sym,rank,price_usd,price_btc,h24_volume_usd,market_cap_usd,avail_sup,"
@@ -190,7 +170,7 @@ public class ICO {
 		
 			for(int i = 0; i < m.size(); i++){
 				
-				out.print(m.get(i).sym+","+m.get(i).rank+","+m.get(i).price_usd+","+m.get(i).price_btc+","
+				out.println(m.get(i).sym+","+m.get(i).rank+","+m.get(i).price_usd+","+m.get(i).price_btc+","
 						+ ""+m.get(i).h24_volume_usd+","+m.get(i).market_cap_usd+","
 								+ ""+m.get(i).available_sup+","
 						+ ""+m.get(i).tot_sup+","+m.get(i).per_change1h+","+m.get(i).per_change24h+","
@@ -201,40 +181,7 @@ public class ICO {
 			
 		    out.close(); 
 	}
-	public static List<Train> getTrains( String resp){
-		
-		List<Train>trains = new ArrayList<Train>();
-		
-		String stazione = ""; 
-		
-		Long orario = null; 
-		Long orarioEff = null; 
-		 
-		Train t = null;
-		try { 
-
-			JSONArray jarr = new JSONArray(resp);  
-			
-			for(int i = 0; i < jarr.length(); i++){ 
-				
-				Object jo = jarr.get(i); 
-				System.out.println("jarr_i = "+jarr.get(i).toString());
-				JSONObject jso = (JSONObject)jo;    
-				JSONObject fermata = (JSONObject)jso.get("fermata");
-              
-                stazione = fermata.getString("stazione");
-                orario = fermata.getLong("programmata");
-                orarioEff = fermata.getLong("effettiva");
-                double delay_in_min = (double)(orarioEff-orario)/1000/60;
-                trains.add(new Train(stazione, orario, orarioEff, delay_in_min));
-			} 
-			
-		}catch (JSONException e) {   
-			System.err.println("Can't parse JSON string");   
-			e.printStackTrace(); 
-		}
-	return trains;
-	}
+	
 	
     public static String convertTsp2Date(long timestamp){
 		
